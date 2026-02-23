@@ -4,27 +4,27 @@ import sqlite3
 import time
 
 
-# 1. READ CSV FILES
+
 
 
 movies = pd.read_csv("data/movies.csv")
 ratings = pd.read_csv("data/ratings.csv")
 
-# 2. CONNECT TO SQLITE DATABASE
+
 
 
 conn = sqlite3.connect("movies.db")
 cursor = conn.cursor()
 
-# Run schema.sql to create tables
+
 with open("schema.sql", "r") as f:
     conn.executescript(f.read())
 
 
-# 3. OMDb API DETAILS
 
 
-API_KEY = "401d78ec"   # Your API key
+
+API_KEY = "401d78ec"   
 
 def fetch_movie_data(title):
     """Fetch director, plot, box office from OMDb."""
@@ -40,7 +40,7 @@ def fetch_movie_data(title):
     return None, None, None
 
 
-# 4. ENRICH MOVIES WITH API DATA
+
 
 
 directors = []
@@ -65,7 +65,7 @@ movies["plot"] = plots
 movies["box_office"] = box_offices
 
 
-# 5. LOAD DATA INTO DATABASE (IDEMPOTENT)
+
 
 
 
@@ -86,3 +86,4 @@ conn.close()
 
 
 print("ETL Pipeline Completed Successfully!")
+
