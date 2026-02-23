@@ -2,11 +2,11 @@
 
 This project is a complete end-to-end ETL pipeline that processes movie data from two different sources, enriches it using an external API, stores it in a relational database, and answers analytical questions using SQL.
 
-This assignment was completed as part of the tsworks Data Engineer (0–1 years) selection process.
+
 
 ---
 
-## 📌 **Project Overview**
+ **Project Overview**
 
 The goal of this project is to:
 
@@ -20,7 +20,7 @@ The goal of this project is to:
 
 ---
 
-## 📁 **Project Structure**
+  **Project Structure**
 moviepro/
 │── etl.py
 │── schema.sql
@@ -32,28 +32,24 @@ moviepro/
 │── ratings.csv
 
 
-## 🚀 **How to Run the Project**
+ How to Run the Project
 
-### **1. Install dependencies**
+1. Install dependencies**
 Run:
 
 
-### **2. Download MovieLens dataset**
+ 2. Download MovieLens dataset
 Download from:  
 https://grouplens.org/datasets/movielens/latest/  
 Extract and place **movies.csv** and **ratings.csv** inside the `/data` folder.
 
-### **3. Get OMDb API key**
+3. Get OMDb API key
 Sign up at:  
 http://www.omdbapi.com/apikey.aspx
 
-Add the API key inside **etl.py**:
-
-```python
-API_KEY = "your_api_key_here"
+Add the API key inside etl.py:
 
 
-python etl.py
 
 
 
@@ -86,7 +82,7 @@ Insert clean, enriched movie & rating records
 
 
 
-📊 SQL Queries
+ SQL Queries
 
 All analytical queries are inside queries.sql:
 
@@ -100,7 +96,7 @@ Average movie rating per year
 
 Run queries inside any SQLite viewer or Python.
 
-🧠 Design Choices & Assumptions
+ Design Choices & Assumptions
 
 SQLite was chosen for convenience and simplicity.
 
@@ -111,4 +107,5 @@ A delay was added between API requests to avoid rate limiting.
 ETL is idempotent, meaning running it multiple times will NOT duplicate data.
 
 Genre parsing was kept simple for this assignment.
+
 
