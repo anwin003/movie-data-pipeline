@@ -27,7 +27,7 @@ with open("schema.sql", "r") as f:
 API_KEY = "401d78ec"   
 
 def fetch_movie_data(title):
-    """Fetch director, plot, box office from OMDb."""
+    
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
     response = requests.get(url).json()
 
@@ -86,4 +86,5 @@ conn.close()
 
 
 print("ETL Pipeline Completed Successfully!")
+
 
