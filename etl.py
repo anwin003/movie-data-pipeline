@@ -4,32 +4,28 @@ import sqlite3
 import time
 
 
-
-
-
 movies = pd.read_csv("data/movies.csv")
 ratings = pd.read_csv("data/ratings.csv")
 
 
-
-
 conn = sqlite3.connect("movies.db")
 cursor = conn.cursor()
-
 
 with open("schema.sql", "r") as f:
     conn.executescript(f.read())
 
 
 
-
-
-API_KEY = "401d78ec"   
+API_KEY = "401d78ec"
 
 def fetch_movie_data(title):
-    
+    """Fetch director, plot, box office from OMDb."""
     url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
-    response = requests.get(url).json()
+
+    try:
+        response = requests.get(url).json()
+    except:
+        return None, None, None  
 
     if response.get("Response") == "True":
         return (
@@ -37,45 +33,55 @@ def fetch_movie_data(title):
             response.get("Plot"),
             response.get("BoxOffice")
         )
-    return None, None, None
+
+    return None, None, None  
 
 
 
 
+movies.rename(columns={"movieId": "movie_id"}, inplace=True)
+ratings.rename(columns={"movieId": "movie_id", "userId": "user_id"}, inplace=True)
 
-directors = []
-plots = []
-box_offices = []
 
-print("Fetching movie details from OMDb API...")
+movies.drop_duplicates(subset=["movie_id"], inplace=True)
+ratings.drop_duplicates(subset=["user_id", "movie_id"], inplace=True)
+
+
+movies["director"] = None
+movies["plot"] = None
+movies["box_office"] = None
+
+
+
+print("Fetching additional movie details from OMDb API...")
 
 for index, row in movies.iterrows():
+
     title = row["title"]
 
-    director, plot, box_office = fetch_movie_data(title)
-    directors.append(director)
-    plots.append(plot)
-    box_offices.append(box_office)
+   
+    if "(" in title and title.endswith(")"):
+        clean_title = title.rsplit("(", 1)[0].strip()
+    else:
+        clean_title = title
 
-    print(f"{index+1}/{len(movies)} fetched: {title}")
-    time.sleep(0.2) 
+    director, plot, box_office = fetch_movie_data(clean_title)
 
-movies["director"] = directors
-movies["plot"] = plots
-movies["box_office"] = box_offices
+    movies.at[index, "director"] = director
+    movies.at[index, "plot"] = plot
+    movies.at[index, "box_office"] = box_office
+
+    time.sleep(0.2)  
 
 
 
 
+movies = movies[["movie_id", "title", "genres", "director", "plot", "box_office"]]
 
 
 cursor.execute("DELETE FROM movies")
 cursor.execute("DELETE FROM ratings")
 conn.commit()
-
-
-movies.drop_duplicates(subset=["movie_id"], inplace=True)
-ratings.drop_duplicates(subset=["user_id", "movie_id"], inplace=True)
 
 
 movies.to_sql("movies", conn, if_exists="append", index=False)
@@ -84,7 +90,4 @@ ratings.to_sql("ratings", conn, if_exists="append", index=False)
 conn.commit()
 conn.close()
 
-
 print("ETL Pipeline Completed Successfully!")
-
-
